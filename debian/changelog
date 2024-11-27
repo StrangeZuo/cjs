@@ -1,3 +1,51 @@
+cjs (6.2.0-3) unstable; urgency=medium
+
+  * d/patches/GjsPrivate-Fix-closure-annotations.patch: added a patch
+    backported from gjs (Closes: #1083177)
+
+ -- Fabio Fantoni <fantonifabio@tiscali.it>  Sun, 06 Oct 2024 14:28:23 +0200
+
+cjs (6.2.0-2) unstable; urgency=medium
+
+  [ Simon McVittie ]
+  * Run tests using dbus-run-session instead of dbus-x11 (Closes: #1079611)
+
+  [ Fabio Fantoni ]
+  * Add d/README.source with a wiki link with details about packaging
+  * d/control: replace pkg-config with pkgconf
+  * Update standards version to 4.7.0, no changes needed
+  * Release to unstable
+
+ -- Fabio Fantoni <fantonifabio@tiscali.it>  Fri, 06 Sep 2024 13:30:32 +0200
+
+cjs (6.2.0-1) experimental; urgency=medium
+
+  * New upstream version 6.2.0 (Closes: #1054367)
+    - Rebased on gjs-1.77.2
+  * d/control:
+    - mozjs deps from 102 to 115
+    - add libxml2-utils to build-deps
+  * Update symbols
+
+ -- Fabio Fantoni <fantonifabio@tiscali.it>  Fri, 14 Jun 2024 18:28:14 +0200
+
+cjs (6.0.0-2) unstable; urgency=medium
+
+  [ Fabio Fantoni ]
+  * d/gbp.conf: change debian-branch and upstream-branch to follow DEP14
+
+  [ Simon McVittie ]
+  * d/control: libcjs0 Depends on gir1.2-girepository-2.0 and on typelibs
+    imported by built-in modules (Closes: #1059678)
+
+ -- Fabio Fantoni <fantonifabio@tiscali.it>  Fri, 05 Jan 2024 18:46:34 +0100
+
+cjs (6.0.0-1) unstable; urgency=medium
+
+  * New upstream version 6.0.0
+
+ -- Fabio Fantoni <fantonifabio@tiscali.it>  Sun, 19 Nov 2023 19:55:40 +0100
+
 cjs (5.8.0-3) unstable; urgency=medium
 
   * Release to unstable

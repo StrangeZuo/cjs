@@ -7,5 +7,5 @@ Depends: libcjs-dev, build-essential
 Restrictions: superficial
 
 Tests: installed-tests
-Depends: dbus-daemon, dbus-x11, cjs-tests, gnome-desktop-testing, xauth, xvfb
+Depends: dbus-daemon, cjs-tests, gnome-desktop-testing, xauth, xvfb
 

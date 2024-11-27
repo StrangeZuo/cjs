@@ -39,6 +39,7 @@ override_dh_auto_test:
 	obj-$(DEB_HOST_GNU_TYPE)/cjs-console -c 'print("Smoke-test OK")'
 	env \
 		TZ=UTC \
+	dbus-run-session -- \
 	xvfb-run -a \
 	dh_auto_test -- -v -C $(CURDIR)/obj-$(DEB_HOST_GNU_TYPE) --timeout-multiplier 4
 

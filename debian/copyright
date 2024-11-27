@@ -41,7 +41,6 @@ Files:
  examples/test.jpg
  installed-tests/js/modules/data.txt
  tools/heapgraph.md
- tools/yarn.lock
 Copyright: No rights reserved
 License: CC0-1.0
 

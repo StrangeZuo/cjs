@@ -164,6 +164,7 @@ gschemas_compiled = gnome.compile_schemas(
 
 tests_dependencies = [
     gschemas_compiled,
+    gjs_private_typelib,
     gjstest_tools_typelib,
     gimarshallingtests_typelib,
     regress_typelib,
@@ -203,35 +204,39 @@ endif
 # during build should be run using dbus-run-session
 
 dbus_tests = ['GDBus']
-if have_gtk4 and not get_option('skip_gtk_tests')
-    # FIXME: find out why GTK4 tries to acquire a message bus
-    dbus_tests += 'Gtk4'
+if not get_option('skip_gtk_tests')
+    have_gtk4 = dependency('gtk4', required: false).found()
+
+    if have_gtk4 
+        # FIXME: find out why GTK4 tries to acquire a message bus
+        dbus_tests += 'Gtk4'
+    endif
 endif
 
-    bus_config = files('../../test/test-bus.conf')
+bus_config = files('../../test/test-bus.conf')
 foreach test : dbus_tests
     test_file = files('test@0@.js'.format(test))
 
     if not get_option('skip_dbus_tests')
         test(test, dbus_run_session,
-        args: ['--config-file', bus_config, '--', minijasmine, test_file],
-        env: tests_environment, protocol: 'tap', suite: 'dbus')
-endif
+            args: ['--config-file', bus_config, '--', minijasmine, test_file],
+            env: tests_environment, protocol: 'tap', suite: 'dbus')
+    endif
 
     dbus_test_description_subst = {
         'name': 'test@0@.js'.format(test),
-    'installed_tests_execdir': installed_tests_execdir,
-}
+        'installed_tests_execdir': installed_tests_execdir,
+    }
     dbus_test_description = configure_file(
         configuration: dbus_test_description_subst,
         input: '../minijasmine.test.in',
         output: 'test@0@.test'.format(test),
-    install: get_option('installed_tests'),
-    install_dir: installed_tests_metadir)
+        install: get_option('installed_tests'),
+        install_dir: installed_tests_metadir)
 
-if get_option('installed_tests')
+    if get_option('installed_tests')
         install_data(test_file, install_dir: installed_js_tests_dir)
-endif
+    endif
 endforeach
 
 # tests using ES modules are also separate because they need an extra

@@ -2,10 +2,15 @@
 # SPDX-FileCopyrightText: 2019 Philip Chimento <philip.chimento@gmail.com>
 # SPDX-FileCopyrightText: 2019 Chun-wei Fan <fanchunwei@src.gnome.org>
 
-project('cjs', 'cpp', 'c', version: '5.8.0', license: ['MIT', 'LGPL2+'],
-    meson_version: '>= 0.54.0',
-    default_options: ['cpp_std=c++17', 'cpp_rtti=false', 'c_std=c99',
-        'warning_level=2', 'b_pch=true' ])
+project(
+    'cjs',
+    'cpp',
+    'c',
+    version : '6.2.0',
+    license : ['MIT', 'LGPL2+'],
+    meson_version : '>=0.56.0',
+    default_options : ['cpp_std=c++17', 'cpp_rtti=false', 'c_std=c99', 'warning_level=2', 'b_pch=true']
+)
 
 # cpp_rtti: SpiderMonkey can be compiled with or without runtime type
 # information, and the default is without. We must match that option because we
@@ -39,7 +44,7 @@ if cc.get_id() == 'msvc'
     add_project_arguments(cxx.get_supported_arguments([
         '-utf-8',  # Use UTF-8 mode
         '/Zc:externConstexpr',  # Required for 'extern constexpr' on MSVC
-        '/Zc:preprocessor',     # Required to consume the mozjs-102 headers on MSVC
+        '/Zc:preprocessor',     # Required to consume the mozjs-115 headers on MSVC
 
         # Ignore spurious compiler warnings for things that GLib and SpiderMonkey
         # header files commonly do
@@ -128,7 +133,7 @@ gio = dependency('gio-2.0', version: glib_required_version,
 ffi = dependency('libffi', fallback: ['libffi', 'ffi_dep'])
 gi = dependency('gobject-introspection-1.0', version: '>= 1.66.0',
     fallback: ['gobject-introspection', 'girepo_dep'])
-spidermonkey = dependency('mozjs-102')
+spidermonkey = dependency('mozjs-115')
 
 # We might need to look for the headers and lib's for Cairo
 # manually on MSVC/clang-cl builds...
@@ -330,6 +335,9 @@ header_conf.set('HAVE_DTRACE', get_option('dtrace'),
     description: 'Using dtrace probes')
 header_conf.set('HAVE_PRINTF_ALTERNATIVE_INT', have_printf_alternative_int,
     description: 'printf() accepts "%Id" for alternative integer output')
+header_conf.set('HAVE_OPEN_MEMSTREAM',
+    cxx.has_function('open_memstream', prefix : '#include <stdio.h>'),
+    description: 'open_memstream() is available')
 if build_readline
     header_conf.set('HAVE_READLINE_READLINE_H',
         cxx.check_header('readline/readline.h', prefix: '#include <cstdio>',
@@ -653,6 +661,7 @@ tests_environment.set('LSAN_OPTIONS',
 tests_environment.set('TSAN_OPTIONS',
     'history_size=5,force_seq_cst_atomics=1,suppressions=@0@'.format(
         meson.current_source_dir() / 'installed-tests' / 'extra' / 'tsan.supp'))
+tests_environment.set('G_SLICE', 'always-malloc')
 tests_environment.set('NO_AT_BRIDGE', '1')
 tests_environment.set('GSETTINGS_SCHEMA_DIR', js_tests_builddir)
 tests_environment.set('GSETTINGS_BACKEND', 'memory')
@@ -678,10 +687,6 @@ if get_option('b_coverage')
 endif
 
 ### Tests and test setups ######################################################
-
-if not get_option('skip_gtk_tests')
-    have_gtk4 = dependency('gtk4', required: false).found()
-endif
 
 subdir('installed-tests')
 
@@ -813,3 +818,10 @@ summary({
     'Dtrace debugging': get_option('dtrace'),
     'Systemtap debugging': get_option('systemtap'),
 }, section: 'Optional features', bool_yn: true)
+
+### Maintainer scripts #########################################################
+
+run_target('maintainer-upload-release',
+  command: ['build/maintainer-upload-release.sh',
+            meson.project_name(),
+            meson.project_version()])
